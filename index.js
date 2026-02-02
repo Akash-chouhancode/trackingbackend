@@ -7,6 +7,7 @@ const pool = require('./config/database');
 const superAdminRoutes = require('./routes/superAdmin/login'); // Importing the super admin routes
 const contactMessageRoutes = require('./routes/contactMessage/contactMessage');
 const trackingStatusRoutes = require('./routes/tracking/trackingStatus');
+const customerTrackingDetailsRoutes = require('./routes/customerTrackingDetails/customerTrackingDetails');
 const trackingRoutes = require('./routes/tracking/tracking');
 
 app.use(cors());
@@ -19,6 +20,7 @@ app.use('/api/admin', superAdminRoutes);
 app.use('/api', contactMessageRoutes);
 app.use('/api', trackingRoutes);
 app.use('/api', trackingStatusRoutes);
+app.use('/api', customerTrackingDetailsRoutes);
 
 
 
