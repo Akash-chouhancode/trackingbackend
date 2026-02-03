@@ -4,6 +4,8 @@ const contactController = require('../../controllers/contactmessage/contactMessa
 const authMiddleware = require('../../middleware/authMiddleware');
 // Route to create a new contact message
 router.post('/contactmessages', contactController.createContactMessage);
+// Route to delete a contact message
+router.delete('/contactmessages/:id', authMiddleware, contactController.deleteContactMessage);
 
 // Route to get all contact messages
 router.get('/contact', authMiddleware, contactController.getContactMessages);

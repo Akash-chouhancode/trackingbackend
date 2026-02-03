@@ -27,6 +27,29 @@ exports.createContactMessage = async (req, res) => {
     }
 };
 
+// Delete a contact message
+exports.deleteContactMessage = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ error: 'Message ID is required' });
+        }
+
+        const query = 'DELETE FROM contact_messages WHERE id = ?';
+        const [result] = await pool.query(query, [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Contact message not found' });
+        }
+
+        res.status(200).json({ message: 'Contact message deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting contact message:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
 // Get all contact messages
 exports.getContactMessages = async (req, res) => {
     try {
