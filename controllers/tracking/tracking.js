@@ -87,5 +87,37 @@ async function getTrackings(req, res) {
   }
 }
 
-module.exports = { createTracking, getTrackings };
+async function deleteTracking(req, res) {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'ID is required' });
+    }
+
+    // Delete from tracking_updates first (child table)
+    await connection.query('DELETE FROM tracking_updates WHERE tracking_record_id = ?', [id]);
+
+    // Delete from tracking_ids (parent table)
+    const [result] = await connection.query('DELETE FROM tracking_ids WHERE id = ?', [id]);
+
+    if (result.affectedRows === 0) {
+      await connection.rollback();
+      return res.status(404).json({ error: 'Tracking record not found' });
+    }
+
+    await connection.commit();
+    res.status(200).json({ message: 'Tracking record and related updates deleted successfully' });
+  } catch (e) {
+    await connection.rollback();
+    console.error('Error deleting tracking:', e);
+    res.status(500).json({ error: 'Internal Server Error', details: e.message });
+  } finally {
+    connection.release();
+  }
+}
+
+module.exports = { createTracking, getTrackings, deleteTracking };
 
